@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safe Space for Akriti 💍</title>
+    <style>
+        /* --- CSS VARIABLES: MIDNIGHT ROSE THEME --- */
+        :root {
+            --bg-dark: #1A1518; --bg-light: #2B1D24; 
+            --text-main: #FDFBF9; --text-muted: #D1B3BA; 
+            --accent: #E8B4B8; --accent-hover: #F2A2AC; 
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(232, 180, 184, 0.2);
+            --glow: 0 0 18px rgba(232, 180, 184, 0.45);
+            --font-heading: Georgia, 'Times New Roman', serif;
+            --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: linear-gradient(135deg, var(--bg-dark), var(--bg-light)); background-attachment: fixed; color: var(--text-main); font-family: var(--font-body); line-height: 1.9; overflow-x: hidden; scroll-behavior: smooth; font-size: 16px; }
+        #particles { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; }
+
+        /* --- BGM TOGGLE --- */
+        #bgm-toggle { position: fixed; top: 20px; right: 20px; z-index: 1000; background: var(--card-bg); border: 1px solid var(--accent); color: var(--accent); border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(5px); font-size: 1.2rem; transition: all 0.3s; display: none; }
+        #bgm-toggle:hover { background: var(--accent); color: var(--bg-dark); box-shadow: var(--glow); transform: scale(1.1); }
+
+        /* --- OVERLAYS --- */
+        .overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-dark); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; transition: opacity 1s ease; }
+        .overlay-content { background: var(--card-bg); border: 1px solid var(--card-border); padding: 45px 30px; border-radius: 24px; box-shadow: var(--glow); max-width: 480px; width: 100%; max-height: 90vh; overflow-y: auto; backdrop-filter: blur(15px); transition: opacity 1s ease, transform 1s ease; }
+        
+        #proposal-overlay { display: none; opacity: 0; z-index: 99; }
+        #proposal-text-container { display: block; opacity: 1; transform: translateY(0); }
+        #certificate-view { display: none; opacity: 0; flex-direction: column; align-items: center; background: transparent; border: none; box-shadow: none; backdrop-filter: none; }
+        #certificate-img { width: 100%; max-width: 400px; border-radius: 12px; border: 2px solid var(--accent); box-shadow: var(--glow); margin-bottom: 30px; }
+
+        .overlay h2 { color: var(--accent); margin-bottom: 15px; font-family: var(--font-heading); font-weight: normal; }
+        .overlay p { color: var(--text-muted); font-style: italic; margin-bottom: 25px; font-size: 1.15rem; }
+        .overlay input { text-align: center; font-size: 1.1rem; letter-spacing: 1px; margin-bottom: 20px; background: rgba(255,255,255,0.08); color: white; border: 1px solid var(--accent); padding: 15px; border-radius: 12px; width: 100%; outline: none; transition: all 0.3s;}
+        .overlay input:focus { box-shadow: var(--glow); background: rgba(255,255,255,0.12); }
+        .error-msg { color: #ff7e7e; font-size: 0.95rem; margin-top: -10px; margin-bottom: 10px; display: none; }
+        
+        #main-content { display: none; opacity: 0; transition: opacity 2s ease; }
+
+        /* --- TYPOGRAPHY --- */
+        h1, h2, h3 { font-family: var(--font-heading); font-weight: normal; color: var(--accent); margin-bottom: 25px; letter-spacing: 0.5px; transition: text-shadow 1s ease; }
+        h1 { font-size: clamp(2rem, 8vw, 3.5rem); line-height: 1.2; }
+        p { margin-bottom: 20px; font-size: 1.15rem; color: var(--text-main); }
+        
+        .highlight { color: var(--accent-hover); font-weight: 600; font-style: italic; text-shadow: 0 0 8px rgba(242, 162, 172, 0.5); animation: subtlePulse 4s infinite alternate; }
+        .her-name { color: #ffffff; font-weight: bold; text-shadow: 0 0 12px rgba(255,255,255,0.7); transition: all 1s ease; }
+
+        /* --- SUJAL'S LINES --- */
+        .sujal-lines { margin-top: 25px; padding: 25px; background: rgba(242, 162, 172, 0.08); border-left: 4px solid var(--accent-hover); border-radius: 0 16px 16px 0; font-style: italic; color: #fff; font-size: 1.15rem; line-height: 1.8; text-align: left; box-shadow: inset 0 0 20px rgba(0,0,0,0.2); }
+
+        /* --- CARDS --- */
+        .section-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 50px 20px; max-width: 850px; margin: 0 auto; }
+        .glass-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 24px; padding: 50px 45px; width: 100%; text-align: center; backdrop-filter: blur(12px); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); opacity: 0; transform: translateY(20px) scale(0.98); transition: opacity 1.2s ease, transform 1.2s ease, box-shadow 1.2s ease; margin-bottom: 40px; }
+        .glass-card.visible { opacity: 1; transform: translateY(0) scale(1.02); }
+        .glass-card.visible h2 { text-shadow: 0 0 12px rgba(232, 180, 184, 0.6); }
+        .glass-card:hover { box-shadow: var(--glow); border-color: rgba(232, 180, 184, 0.5); }
+
+        /* --- BUTTONS --- */
+        button { background-color: transparent; border: 1.5px solid var(--accent); color: var(--accent); padding: 14px 38px; font-size: 1.1rem; font-family: var(--font-body); font-weight: 500; border-radius: 40px; cursor: pointer; transition: all 0.4s ease; margin-top: 15px; margin-bottom: 10px; letter-spacing: 0.5px; }
+        button:hover { background-color: var(--accent); color: var(--bg-dark); transform: translateY(-3px); box-shadow: var(--glow); font-weight: bold; }
+        textarea { width: 100%; height: 130px; padding: 18px; border-radius: 16px; border: 1px solid var(--card-border); background: rgba(255, 255, 255, 0.05); color: var(--text-main); font-family: var(--font-body); font-size: 1.05rem; margin-top: 15px; outline: none; transition: all 0.3s; resize: vertical; line-height: 1.6; }
+        textarea:focus { border-color: var(--accent); box-shadow: var(--glow); background: rgba(255, 255, 255, 0.1); }
+
+        /* --- HOLD MY HAND --- */
+        .hand-btn { border-color: var(--accent-hover); color: var(--accent-hover); animation: softPulse 3s infinite; }
+        .hand-btn.active { background: var(--accent-hover); color: var(--bg-dark); box-shadow: 0 0 25px rgba(242,162,172,0.9); animation: none; transform: scale(0.95); }
+        #hand-msg { display: none; font-size: 1.35rem; color: var(--accent); margin-top: 20px; font-style: italic; opacity: 0; transition: opacity 1s; }
+
+        /* --- AUDIO & VIDEO --- */
+        .voice-note-block { background: rgba(0,0,0,0.25); border: 1px solid var(--card-border); border-radius: 20px; padding: 30px; margin-top: 25px; text-align: center; transition: all 0.3s; }
+        .voice-note-block:hover { border-color: var(--accent); box-shadow: 0 0 15px rgba(232, 180, 184, 0.25); transform: translateY(-2px); }
+        .voice-note-block h3 { margin-bottom: 15px; font-size: 1.4rem; }
+        .play-btn { display: block; margin: 0 auto 15px auto; background: var(--card-bg); width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: var(--accent); padding: 0; transition: 0.3s; border: 2px solid var(--card-border); }
+        .play-btn:hover { background: var(--accent); color: var(--bg-dark); transform: scale(1.1); box-shadow: var(--glow); border-color: var(--accent); }
+        .audio-card { width: 100%; max-width: 380px; border: 1px solid var(--card-border); padding: 18px 25px; border-radius: 30px; cursor: pointer; transition: all 0.3s ease; color: var(--text-main); background: rgba(0,0,0,0.25); font-size: 1.15rem; margin: 12px auto; display: flex; justify-content: center; align-items: center; gap: 10px; }
+        .audio-card:hover { background: var(--accent); color: var(--bg-dark); border-color: var(--accent); box-shadow: var(--glow); font-weight: bold; transform: translateY(-2px); }
+        video { width: 100%; border-radius: 16px; border: 2px solid var(--card-border); margin-top: 20px; box-shadow: var(--glow); outline: none; background: #000; }
+
+        /* --- GENERATORS --- */
+        .gen-btn { width: 85%; max-width: 380px; margin: 12px auto; display: block; font-size: 1.15rem; }
+        #reassurance-display { margin-top: 30px; font-family: var(--font-heading); font-size: 1.5rem; color: var(--accent-hover); min-height: 80px; text-shadow: var(--glow); padding: 0 20px; line-height: 1.5; }
+
+        /* --- BRAIN DUMP & BREATHING --- */
+        .burn-anim { opacity: 0; filter: blur(12px); transform: scale(0.85); pointer-events: none; }
+        #burn-msg-container { display: none; margin-top: 25px; opacity: 0; transition: opacity 1s; }
+        .breathe-circle { width: 180px; height: 180px; border-radius: 50%; background: radial-gradient(circle, rgba(232,180,184,0.45) 0%, rgba(232,180,184,0) 70%); margin: 40px auto; animation: breathe 8s infinite ease-in-out; display: flex; align-items: center; justify-content: center; box-shadow: var(--glow); }
+
+        /* --- LOVE LETTER --- */
+        .love-letter { background: rgba(242, 162, 172, 0.05); border: 1px solid var(--accent); border-radius: 16px; padding: 45px 35px; margin-top: 25px; text-align: left; box-shadow: inset 0 0 25px rgba(0,0,0,0.4); font-style: italic; font-size: 1.15rem; }
+
+        /* --- HIDDEN SECTIONS --- */
+        .hidden-content { display: none; margin-top: 25px; padding: 30px; border-top: 1px solid var(--card-border); opacity: 0; transition: opacity 1.5s; text-align: left; background: rgba(0,0,0,0.25); border-radius: 16px;}
+
+        /* --- BOTTOM TEXT --- */
+        .final-bottom-text { font-family: var(--font-heading); font-size: 1.6rem; color: var(--accent); font-style: italic; text-align: center; margin: 90px 0 50px 0; opacity: 0; transform: translateY(20px); transition: opacity 2s ease, transform 2s ease; text-shadow: var(--glow); }
+        .final-bottom-text.visible { opacity: 1; transform: translateY(0); }
+
+        /* --- ANIMATIONS --- */
+        @keyframes breathe { 0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(232, 180, 184, 0.2); } 50% { transform: scale(1.6); background: radial-gradient(circle, rgba(232,180,184,0.65) 0%, rgba(232,180,184,0) 70%); box-shadow: 0 0 50px rgba(232, 180, 184, 0.7); } }
+        @keyframes text-fade { 0%, 100% { opacity: 0.5; content: "Breathe in..."; } 50% { opacity: 1; content: "Breathe out..."; } }
+        @keyframes softPulse { 0%, 100% { box-shadow: 0 0 5px rgba(232, 180, 184, 0.2); } 50% { box-shadow: 0 0 18px rgba(232, 180, 184, 0.7); border-color: var(--accent); } }
+        @keyframes subtlePulse { 0% { text-shadow: 0 0 5px rgba(242, 162, 172, 0.3); } 100% { text-shadow: 0 0 12px rgba(242, 162, 172, 0.7); } }
+    </style>
+</head>
+<body>
+
+    <audio id="bgm-player" src="bgm.mp3" loop></audio>
+    <div id="bgm-toggle" onclick="toggleBGM()">🎵</div>
+
+    <canvas id="particles"></canvas>
+
+    <div id="auth-overlay" class="overlay">
+        <div class="overlay-content">
+            <h2>For <span class="her-name">Akriti</span> 💍</h2>
+            <p style="color: var(--accent-hover); font-size: 1.25rem; margin-top: 15px;">When did my life take a turn to happiness??</p> 
+            <input type="text" id="main-password" placeholder="Your answer...">
+            <p id="main-error" class="error-msg">That's not quite right, my love. Try again. 🥀</p>
+            <button onclick="checkMainPassword()">Unlock My World ✨</button>
+        </div>
+    </div>
+
+    <div id="proposal-overlay" class="overlay">
+        
+        <div id="proposal-text-container" class="overlay-content" style="border: 2px solid var(--accent); box-shadow: 0 0 35px rgba(232, 180, 184, 0.7);">
+            <h2 style="font-size: 2.3rem; text-shadow: var(--glow);">💍 Official Certificate of Forever 💍</h2>
+            
+            <p style="font-size: 1.1rem; margin-top: 15px; line-height: 1.8;">
+                Heya, I know it's been a long time, and I am more than sure that you are the perfect partner for me to have in my life forever. You are the lovely girl who is gonna be my wife forever.<br><br>
+                I also know I would be more than happy to keep you smiling, loving, and enjoying your life.<br><br>
+                <span class="highlight">The only thing is that I wanna ask you... would you marry me?</span><br><br>
+                So answer me, after all this time, would you marry me girl? 😼❤️🌹
+            </p>
+            
+            <button onclick="acceptProposal()" style="background: var(--accent); color: var(--bg-dark); font-size: 1.15rem; padding: 15px 40px; margin-top: 15px; box-shadow: var(--glow);">
+                Yes I wanna marry you daddy 💍
+            </button>
+        </div>
+
+        <div id="certificate-view" class="overlay-content">
+            <h2 style="margin-bottom: 25px; text-shadow: var(--glow); font-size: 2.5rem;">You are officially mine. 🌹</h2>
+            <img id="certificate-img" src="certificate.jpg" alt="Marriage Certificate">
+            <br>
+            <button onclick="enterUniverse()" style="background: var(--accent); color: var(--bg-dark); font-size: 1.2rem; padding: 16px 45px; margin-top: 20px; box-shadow: var(--glow);">
+                Enter your safe universe ✨
+            </button>
+        </div>
+    </div>
+
+    <div id="main-content">
+        <div class="section-wrapper">
+            
+            <section id="intro" class="glass-card" style="border: none; background: transparent; box-shadow: none; padding-top: 5vh;">
+                <p id="time-greeting" style="font-size: 1.4rem; font-style: italic; color: var(--accent-hover); margin-bottom: 20px; text-shadow: var(--glow);"></p>
+                
+                <h1 style="color: var(--accent); margin-bottom: 5px; text-shadow: var(--glow); font-size: clamp(2.5rem, 9vw, 4rem);">
+                    Safe Space for <span class="her-name">Akriti</span> 💍
+                </h1>
+                
+                <button id="hand-btn" class="hand-btn" onclick="holdHand()" style="margin-top: 30px;">Hold My Hand 🤍</button>
+                <p id="hand-msg">I'm right here. I've got you.</p>
+                <br>
+                <button style="margin-top: 50px; padding: 15px 45px; font-size: 1.2rem;" onclick="document.getElementById('validation').scrollIntoView();">Enter Your Universe ✨</button>
+            </section>
+
+            <section id="validation" class="glass-card">
+                <h2>I See You 🤍</h2>
+                <p>I see the quiet battles you fight in your mind when the room goes silent. I see the girl who holds so much love, but sometimes fears she is entirely alone.</p>
+                <p>You have carried the weight of the world for so long, trying to be perfect, trying to hold it all together. <span class="highlight">You don't have to be strong here.</span> You are mine to take care of.</p>
+                <div class="sujal-lines">
+                    Meri jaan, bhale logo ne tumhe nahi dekha, nahi samjha, but I understand you. I see you, I love you.<br><br>
+                    Mujhe pata hai aap kitni strong ho, and maine dekha hai aapka wo side jo aapne hamesha chupa rakha hai. Jo sabse chupake hamesha strong banti ho, maine us side ko bhi dekha hai jisko zarurat hai... and mai hun uske liye. Aapko hamesha pyaar karne ke liye.<br><br>
+                    So I see you. Mai dekh raha hu meri jaan ki har side ko—strength, weakness, crying, everything. 🌹💕
+                </div>
+            </section>
+
+            <section class="glass-card">
+                <h2>Why You? 🥺</h2>
+                <p>People ask "why her?" but they don't see the absolute magic that you are. I see a girl who has been through so much, yet still chooses to be kind to the world.</p>
+                <p>A girl who puts everyone else first, forgetting her own beautiful heart. I didn't just choose you, <span class="her-name">Akriti</span>; <span class="highlight">my soul recognized you.</span> You are the exact kind of rare I want to protect forever.</p>
+                <div class="sujal-lines">
+                    Why you??? Is this even a question? Why not you?? Kyu nhi? Tum hi to ho?<br><br>
+                    Is zaalim zamane me pyaari si bachi sab mushkilo ko sehen karke ab bas sabko khush rakhna chahti hai, not focusing on her happiness? What else do I need?<br><br>
+                    Koi kaisa bhi rahe, you try to be good. Aisi personality aur kaha milegi?<br><br>
+                    Aise batata jaaun to laakho reasons honge including every criteria, but majorly I love you cause you are <span class="her-name">Akriti</span>, nothing else. And you look hot hehe 😼🔥
+                </div>
+            </section>
+
+            <section class="glass-card">
+                <h2>You Don’t Have To Prove Yourself 🌿</h2>
+                <p>You spend so much of your life trying to show the world your worth. <span class="highlight">You don't have to do that here.</span></p>
+                <p>You do not need to perform to keep my attention. You do not need to compete for my affection. My eyes are already set on you. My mind is already made up.</p>
+                <div class="sujal-lines">
+                    Dekho meri jaan, meri Shia, mera bacha... you don't have to prove yourself yaar. You are perfect the way you are.<br><br>
+                    You are the most amazing girl I have met without even doing anything.<br>
+                    Nothing you do or try will give you your worth. Tumhare kuch karne se tumhari value nahi badhegi. I loved you for who you are, without any exterior thing valuing you. 🤍
+                </div>
+            </section>
+
+            <section class="glass-card">
+                <h2>No Need To Earn My Love 🤲</h2>
+                <p>Love isn't a transaction. You don't have to 'be good' or 'do enough' to keep me.</p>
+                <p>You don't have to earn my presence. <span class="highlight">My love for you is a fact, not a reward.</span> Even on the days you feel completely unlovable, I am still choosing you.</p>
+                <div class="sujal-lines">
+                    Aisa kyu lagta hai tumhe ki tumhare kuch karne se tumhe jyada pyaar karunga, ya tum aisa karogi to I would love you more?<br><br>
+                    Mera pyaar hai hi tumhare liye always, and rahega bhi sirf tumhara cause I choose you. I love you. I love your heart, not the work you do or anything.<br><br>
+                    Samjhi gadhi? So no need to try to earn my love. 🥀
+                </div>
+            </section>
+
+            <section class="glass-card">
+                <h2>No Need To Be Perfect ✨</h2>
+                <p>I didn't fall in love with a flawless idea of a person. I fell in love with <span class="her-name">Akriti</span>. The messy, the anxious, the beautiful, the real.</p>
+                <p><span class="highlight">Your imperfections do not push me away.</span> They are exactly why I love you.</p>
+                <div class="sujal-lines">
+                    Dekho, I know you try to be perfect, do perfect. But pata hai? Perfection se jyada imperfections are attractive and lovely, cause it shows you are trying and not giving up.<br><br>
+                    And being imperfect is also a lovely thing. So don't stress always. Just do your best. 🌹❤️
+                </div>
+            </section>
+
+            <section class="glass-card">
+                <h2>You Are Safe Here 🕊️</h2>
+                <p>There is no standard you have to meet for me to stay. Your loud thoughts, your panic, your tears—they do not scare me away.</p>
+                <p>Your heavy days belong to me just as much as your light ones. <span class="highlight">I am keeping you.</span> You are completely secure with me.</p>
+                <div class="sujal-lines">
+                    Safe ho bache mere paas. Meri ho, meri rahogi aur hamesha I would love you, care for you, pamper you.<br><br>
+                    Idhar tumhe kisi cheez se darne ki need nahi. I won't judge, I won't argue for silly things seriously. Ho to meri hi, so nothing would make me leave. 💍
+                </div>
+            </section>
+
+            <section class="glass-card">
+                <h2>My Voice For <span class="her-name">Akriti</span> 🎙️</h2>
+                <p>For the nights reading isn't enough, and you just need to hear me.</p>
+                <button onclick="document.getElementById('unlocked-voice-notes').style.display='block'; setTimeout(()=>document.getElementById('unlocked-voice-notes').style.opacity='1', 50); this.style.display='none';">
+                    Open My Letters 💌
+                </button>
+            </section>
+
+            <section id="unlocked-voice-notes" class="glass-card" style="display: none; opacity: 0; transition: 1s;">
+                <h2 style="margin-bottom: 30px;">Here are some notes from your hubby for you 🎧</h2>
+                
+                <div class="voice-note-block">
+                    <h3>1. The Panic Button 🌬️</h3>
+                    <button class="play-btn" onclick="toggleAudio('audio1', this)">▶</button>
+                    <audio id="audio1" src="panic.mp3"></audio>
+                    <p style="font-style: italic; color: var(--accent-hover);">"Breathe with me. I've got you."</p>
+                    <div class="sujal-lines" style="font-size: 1.05rem; padding: 15px; margin-top: 15px; text-align: center; border:none; background:transparent; box-shadow: none;">Panic horaha hai? Why panic bacha? Idhar aao listen to me 💕 No need to panic, papa is here na bacha muwaah.</div>
+                </div>
+                
+                <div class="voice-note-block">
+                    <h3>2. "Am I A Burden?" 🥺</h3>
+                    <button class="play-btn" onclick="toggleAudio('audio2', this)">▶</button>
+                    <audio id="audio2" src="burden.mp3"></audio>
+                    <p style="font-style: italic; color: var(--accent-hover);">"You are the best part of my day."</p>
+                    <div class="sujal-lines" style="font-size: 1.05rem; padding: 15px; margin-top: 15px; text-align: center; border:none; background:transparent; box-shadow: none;">Burden? Are aap jo man karo, even if you irritate the fck out of me, you will never be a burden to me. Mera bojh nhi aap sukoon ho mera. Aapse to khushi milti hai, even aapka badmashi, naraz hona sab kuch sukoon hai pyaar se cause meri bachi ho, my lovely daughter.</div>
+                </div>
+
+                <div class="voice-note-block">
+                    <h3>3. "Will You Leave?" 🤍</h3>
+                    <button class="play-btn" onclick="toggleAudio('audio3', this)">▶</button>
+                    <audio id="audio3" src="leave.mp3"></audio>
+                    <p style="font-style: italic; color: var(--accent-hover);">"I am anchored to you."</p>
+                    <div class="sujal-lines" style="font-size: 1.05rem; padding: 15px; margin-top: 15px; text-align: center; border:none; background:transparent; box-shadow: none;">Mai chor dunga? Not possible bby. You are my soul to my body, how can I leave you?? Ghar ho mera aap, mere dil ki dhadkan ho aap, aapko chorke kaha jaunga??</div>
+                </div>
+
+                <div class="voice-note-block">
+                    <h3>4. "Not Good Enough" 🥀</h3>
+                    <button class="play-btn" onclick="toggleAudio('audio4', this)">▶</button>
+                    <audio id="audio4" src="not_enough.mp3"></audio>
+                    <p style="font-style: italic; color: var(--accent-hover);">"You are my absolute dream."</p>
+                    <div class="sujal-lines" style="font-size: 1.05rem; padding: 15px; margin-top: 15px; text-align: center; border:none; background:transparent; box-shadow: none;">Not good enough???? Bbyyyyy you are the perfect girl for me. Perfect in every aspect, most lovable girl and I love you more than anything.</div>
+                </div>
+
+                <div class="voice-note-block">
+                    <h3>5. I Am So Proud Of You ✨</h3>
+                    <button class="play-btn" onclick="toggleAudio('audio5', this)">▶</button>
+                    <audio id="audio5" src="proud.mp3"></audio>
+                    <p style="font-style: italic; color: var(--accent-hover);">"I see how hard you fight."</p>
+                    <div class="sujal-lines" style="font-size: 1.05rem; padding: 15px; margin-top: 15px; text-align: center; border:none; background:transparent; box-shadow: none;">I am so so proud of you for living every day with all the burden happily smiling, proud of you for giving your best everyday, trying your best. So so proud of you for always being there for me, doing every difficult thing. Don't worry, you make me so proud every day. 💕</div>
+                </div>
+
+                <div class="voice-note-block">
+                    <h3>6. Miss You / Sleep Well 🌙</h3>
+                    <button class="play-btn" onclick="toggleAudio('audio6', this)">▶</button>
+                    <audio id="audio6" src="miss_you.mp3"></audio>
+                    <p style="font-style: italic; color: var(--accent-hover);">"Close your eyes, I'm right beside you."</p>
+                    <div class="sujal-lines" style="font-size: 1.05rem; padding: 15px; margin-top: 15px; text-align: center; border:none; background:transparent; box-shadow: none;">Missing me? Mai to aapke dil me hi hun bby always and here in your love. Bacha aap ye voice note sunlo, u will feel me with you.</div>
+                </div>
+
+                <div class="voice-note-block">
+                    <h3>7. Love & Kisses 💋</h3>
+                    <button class="play-btn" onclick="toggleAudio('audio7', this)">▶</button>
+                    <audio id="audio7" src="kisses.mp3"></audio>
+                    <p style="font-style: italic; color: var(--accent-hover);">"Just because."</p>
+                    <div class="sujal-lines" style="font-size: 1.05rem; padding: 15px; margin-top: 15px; text-align: center; border:none; background:transparent; box-shadow: none;">It's just something you would need randomly hehe. 🤭💋</div>
+                </div>
+            </section>
+
+            <section class="glass-card">
+                <h2>Leave It Here 🥀</h2>
+                <p>Is a heavy thought bothering you? Type it out, and let it go. It won't save anywhere.</p>
+                <textarea id="dump-box" placeholder="Write whatever is hurting your mind right now..."></textarea>
+                <button onclick="burnThoughts()" style="margin-top: 20px;">Burn This Thought 🔥</button>
+                <div id="burn-msg-container">
+                    <p class="highlight" style="font-size: 1.3rem;">Dekha? It was simple. Every negative, heavy thought burned up.</p>
+                    <p style="font-style: italic; font-size: 1.15rem;">What else do you need bache? Now let that be ashes and keep going ahead with love. I am so proud of you for doing this. 🤍</p>
+                </div>
+            </section>
+
+            <section class="glass-card">
+                <h2>A Care Package For <span class="her-name">Akriti</span> 💌</h2>
+                <p>What do you need to hear right now?</p>
+                <button class="gen-btn" onclick="generateLove('anxiety')">🌧️ My mind is loud</button>
+                <button class="gen-btn" onclick="generateLove('insecurity')">🥺 I feel like I'm not enough</button>
+                <button class="gen-btn" onclick="generateLove('miss')">🫂 I miss you</button>
+                <button class="gen-btn" onclick="generateLove('failure')">🥀 I think I am a failure</button>
+                <button class="gen-btn" onclick="generateLove('badgf')">💔 I am a bad girlfriend</button>
+                
+                <div id="reassurance-display"></div>
+            </section>
+
+            <section class="glass-card">
+                <h2>A Moment of Calm 🎵</h2>
+                <p>Take a deep breath. Let the music ground you.</p>
+                <div style="margin-top: 30px;">
+                    <button class="audio-card" onclick="playMusic('song1.mp3')">🎧 Know your worth ✨</button>
+                    <button class="audio-card" onclick="playMusic('song2.mp3')">🎧 You are amazing 🌙</button>
+                    <button class="audio-card" onclick="playMusic('song3.mp3')">🎧 Don't worry 🌧️</button>
+                    <button class="audio-card" onclick="playMusic('song4.mp3')">🎧 Lovely girl 🕊️</button>
+                    <button class="audio-card" onclick="playMusic('song5.mp3')">🎧 Sujal ki jaan 🤍</button>
+                </div>
+                <audio id="music-player"></audio>
+            </section>
+
+            <section class="glass-card">
+                <h2>When Panic Sets In 🌬️</h2>
+                <div class="breathe-circle"><span class="breathe-text" id="breathe-text-display">Breathe...</span></div>
+                <p style="margin-top: 30px; font-size: 1.15rem;">Match the circle. Nothing is chasing you. <span class="highlight">You are safe.</span></p>
+            </section>
+
+            <section class="glass-card">
+                <h2>If You Ever Doubt Me 🥀</h2>
+                <p>For the days when we argue, or when silence makes you overthink.</p>
+                <button onclick="document.getElementById('hidden-doubt-content').style.display='block'; setTimeout(()=>document.getElementById('hidden-doubt-content').style.opacity='1', 50); this.style.display='none';">Read This</button>
+                <div id="hidden-doubt-content" style="display:none; opacity:0; transition: 1s; margin-top: 25px; text-align: left;">
+                    <p>Listen to me carefully. When I am quiet, or when we are upset with each other, my love for you does not fluctuate. <span class="highlight">Anger or distance does not equal abandonment.</span></p>
+                    <p>You are my girl. Period. Even when things are hard, I am choosing you. Don't let your mind convince you otherwise.</p>
+                    <div class="sujal-lines">
+                        Come to me, scold me, and tell me. And I will hold you to my heart, make you hear my heartbeat that it's all yours, and show you how amazing you are.<br><br>
+                        Bby, I only have you. You are like the soul to my body. How can I betray you huh?? 🥺💍
+                    </div>
+                </div>
+            </section>
+
+            <section class="glass-card">
+                <h2>Do I Even Deserve This Much Love? 🥺</h2>
+                <p>For when your mind tries to tell you that you don't.</p>
+                <button onclick="document.getElementById('hidden-deserve-content').style.display='block'; setTimeout(()=>document.getElementById('hidden-deserve-content').style.opacity='1', 50); this.style.display='none';">Click Me</button>
+                <div id="hidden-deserve-content" style="display:none; opacity:0; transition: 1s; margin-top: 25px; text-align: left;">
+                    <p>Yes. A thousand times, yes. You deserve every ounce of this love, this safety, and so much more.</p>
+                    <p>You have spent so much of your life giving love to others. <span class="highlight">It is your turn to receive it.</span> You are worthy of a love that stays, a love that doesn't make you perform, and a love that holds you when you are tired.</p>
+                    <div class="sujal-lines">
+                        You deserve much more than this bacha, and aapse jyada koi deserve nhi karta. You deserve the world, and mai duniya to nhi but meri choti duniya aapke naam kar sakta hun. 🌍🌹
+                    </div>
+                </div>
+            </section>
+
+            <section class="glass-card">
+                <h2>A Small Gesture of Love For My Girl 🎬</h2>
+                <p>Just a little reminder of us.</p>
+                <video controls src="video1.mp4"></video>
+                <video controls src="video2.mp4"></video>
+            </section>
+
+            <section class="glass-card">
+                <h2 style="font-size: 2.2rem; text-shadow: var(--glow);">A Letter For My Wife 💌</h2>
+                <div class="love-letter">
+                    My dearest <span class="her-name">Akriti</span>,<br><br>
+                    I wanted to put this at the very end of your space, just to make sure you never forget how incredibly proud I am of the woman you are.<br><br>
+                    Life gets heavy, and I know your mind sometimes tries to convince you of things that aren't true. It tries to tell you that you aren't enough, or that you have to fight for your worth. But I need you to read this and believe me: <span class="highlight">You are the most breathtaking, resilient, and beautiful soul I have ever known.</span><br><br>
+                    You don't need to change. You don't need to fix yourself to be worthy of my love. You already have it all. Have faith in yourself, my love, because I have infinite faith in you. Whatever you want to do, whatever you want to achieve, I am standing right behind you.<br><br>
+                    I love you. I trust you. I believe in you.<br><br>
+                    Forever yours,<br>
+                    Sujal 💍
+                </div>
+            </section>
+
+            <div id="bottom-text" class="final-bottom-text">
+                "You made it through another day. I’m so proud of you."
+            </div>
+
+        </div>
+        <footer>
+            Built as a sanctuary. Made with eternal love. — Sujal 💍🌹
+        </footer>
+    </div>
+
+    <script>
+        // --- 1. GATEKEEPERS ---
+        function checkMainPassword() {
+            const input = document.getElementById('main-password').value.toLowerCase().trim();
+            if (input.includes('12') && input.includes('may')) {
+                const authOverlay = document.getElementById('auth-overlay');
+                authOverlay.style.opacity = '0';
+                
+                // Start BGM on unlock
+                const bgm = document.getElementById('bgm-player');
+                bgm.play().catch(e => console.log("BGM play prevented by browser"));
+                document.getElementById('bgm-toggle').style.display = 'flex';
+
+                setTimeout(() => {
+                    authOverlay.style.display = 'none';
+                    
+                    const proposal = document.getElementById('proposal-overlay');
+                    proposal.style.display = 'flex'; 
+                    setTimeout(() => {
+                        proposal.style.opacity = '1';
+                    }, 50);
+                }, 1000);
+            } else { 
+                document.getElementById('main-error').style.display = 'block'; 
+            }
+        }
+
+        function acceptProposal() {
+            const propText = document.getElementById('proposal-text-container');
+            propText.style.opacity = '0';
+            propText.style.transform = 'translateY(-20px)';
+            
+            const certView = document.getElementById('certificate-view');
+            
+            // Change Names
+            const names = document.querySelectorAll('.her-name');
+            names.forEach(el => { el.innerText = "Mrs. Sujal ✨"; });
+
+            setTimeout(() => {
+                propText.style.display = 'none';
+                certView.style.display = 'flex';
+                setTimeout(() => certView.style.opacity = '1', 50);
+            }, 1000);
+        }
+
+        function enterUniverse() {
+            const proposalOverlay = document.getElementById('proposal-overlay');
+            proposalOverlay.style.opacity = '0';
+            setTimeout(() => {
+                proposalOverlay.style.display = 'none';
+                const mainContent = document.getElementById('main-content');
+                mainContent.style.display = 'block'; setTimeout(() => mainContent.style.opacity = '1', 50);
+                observeCards(); setTimeGreeting();
+            }, 1000);
+        }
+
+        // --- 2. BGM TOGGLE ---
+        let bgmPlaying = true;
+        function toggleBGM() {
+            const bgm = document.getElementById('bgm-player');
+            const toggleBtn = document.getElementById('bgm-toggle');
+            if(bgmPlaying) { bgm.pause(); toggleBtn.innerText = "🔇"; bgmPlaying = false; }
+            else { bgm.play(); toggleBtn.innerText = "🎵"; bgmPlaying = true; }
+        }
+
+        // --- 3. TIME GREETING ---
+        function setTimeGreeting() {
+            const hour = new Date().getHours();
+            let greeting = "A very lovely morning my dear sunshine 🌅"; 
+            if (hour >= 12 && hour < 18) greeting = "Good noon, hope you had lunch ☀️"; 
+            else if (hour >= 18 && hour < 22) greeting = "A very lovely and calm evening just like you bachaaa 🌙"; 
+            else if (hour >= 22 || hour < 5) greeting = "It's too late bby go and sleep so you can rest and slay the next day again with your beauty ✨"; 
+            document.getElementById('time-greeting').innerText = greeting;
+        }
+
+        // --- 4. BUTTONS & BURN ---
+        function holdHand() {
+            const btn = document.getElementById('hand-btn'); const msg = document.getElementById('hand-msg');
+            btn.classList.add('active'); btn.innerText = "Holding you... 🤍";
+            msg.style.display = 'block'; setTimeout(() => msg.style.opacity = '1', 50);
+            setTimeout(() => { btn.classList.remove('active'); btn.innerText = "Hold My Hand 🤍"; msg.style.opacity = '0'; setTimeout(() => msg.style.display = 'none', 1000); }, 5000);
+        }
+
+        function burnThoughts() {
+            const box = document.getElementById('dump-box'); const container = document.getElementById('burn-msg-container');
+            if(box.value.trim() === '') return;
+            box.classList.add('burn-anim');
+            setTimeout(() => {
+                box.value = ''; box.classList.remove('burn-anim');
+                container.style.display = 'block'; setTimeout(() => container.style.opacity = '1', 50);
+                setTimeout(() => { container.style.opacity = '0'; setTimeout(() => container.style.display = 'none', 1000); }, 8000);
+            }, 1500);
+        }
+
+        // --- 5. AUDIO PLAYERS ---
+        let currentAudio = null; let currentBtn = null;
+        function toggleAudio(id, btn) {
+            const audio = document.getElementById(id);
+            if (currentAudio && currentAudio !== audio) { currentAudio.pause(); currentBtn.innerText = "▶"; }
+            if (audio.paused) {
+                audio.play().catch(e => alert("Please add the mp3 files to your folder!"));
+                btn.innerText = "⏸"; currentAudio = audio; currentBtn = btn;
+            } else { audio.pause(); btn.innerText = "▶"; currentAudio = null; currentBtn = null; }
+            audio.onended = () => { btn.innerText = "▶"; currentAudio = null; };
+        }
+        function playMusic(src) {
+            const player = document.getElementById('music-player');
+            player.src = src; player.play().catch(e => console.log("Add local music files."));
+        }
+
+        // --- 6. CARE PACKAGE ---
+        const lines = {
+            anxiety: [
+                "Mind may be loud, come to me and feel our calm love. 🤍", 
+                "Sab shor ko chorke mere baahon me aajao sukoon se bache. 🕊️",
+                "Take a deep breath. I've got you. 🌬️",
+                "Your mind is lying to you right now. You are safe. 🤍",
+                "I am not going anywhere. Drop your shoulders. 🕊️",
+                "There is no emergency. We have all the time in the world. ⏳",
+                "Look around you. Name 3 things you can see. I am with you. 🌿",
+                "You don't have to figure everything out in this exact second. Rest. ✨",
+                "It is just a bad moment, not a bad life. I'm here. 🫂",
+                "Let the thoughts pass like clouds. You are anchored to me. ⚓",
+                "I love you even when your mind is chaotic. 🥀",
+                "You are safe. You are mine. You are okay. 💍"
+            ],
+            insecurity: [
+                "Are tum had se zyada kaafi ho bache. 💍",
+                "Tumhare jaisi koi hogi bhala? You are the best bubuuu. 👑",
+                "You are more than enough exactly as you are. 💍",
+                "I choose you. I will always choose you. 🌹",
+                "You don't need to be perfect for me to stay. ✨",
+                "I love every single messy, beautiful part of you. 🫂",
+                "No one else could ever compare to you. 👑",
+                "You are exactly the person I was looking for. 🤍",
+                "Stop being so hard on my favorite person. 🥺",
+                "I see all of you, and I want all of you. Always. 🥀",
+                "You are a gift to my life. Never doubt that. 🎁",
+                "You are entirely irreplaceable in my world. 🌍"
+            ],
+            miss: [
+                "I am missing you right back. Come here. 🫂",
+                "Distance is nothing. You are always in my heartbeat. 💓",
+                "I'm thinking about you right now too. 💭",
+                "Close your eyes. Imagine me hugging you really tight. 🫂",
+                "Even when I'm not there, my heart is right next to yours. 🤍",
+                "I can't wait to see your beautiful face again. 🌹",
+                "Counting down the seconds until you're in my arms. ⏳",
+                "You are my favorite place to be. 🏡",
+                "I love you across every mile. ✨",
+                "Sending you a forehead kiss right now. 💋",
+                "You are always on my mind. Always. 🕊️"
+            ],
+            failure: [
+                "You are not a failure. You are my strongest girl. 💪",
+                "Girna is fine bache, papa hai uthane ke liye. ✨",
+                "You are trying your best, and I am so incredibly proud of you. ✨",
+                "Your worth is not tied to your productivity. You are enough. 🕊️",
+                "It is okay to rest. You don't have to be 'on' all the time. 🤍",
+                "You are stronger than you give yourself credit for. 💪",
+                "I see how hard you are trying. Take a breath. 🌿",
+                "Failure is just an event, it is not who you are. I love you. 🥀",
+                "You are doing beautifully, even if it doesn't feel like it. 🌹",
+                "I am proud to be yours, no matter what happens. 💍",
+                "Let yourself be human today. I've got you. 🫂"
+            ],
+            badgf: [
+                "Aapse achi koi nhi ho sakti as meri gf. 🥀",
+                "Meri zindagi ka sabse best decision hai to make you my girlfriend bby. 💍",
+                "You love me perfectly. Stop thinking otherwise. 🤍",
+                "I wouldn't trade you for anyone in the entire world. 💍",
+                "You are the best thing that ever happened to me. Stop thinking otherwise. 🥀",
+                "You are my dream girl. Period. 👑",
+                "I am the luckiest guy alive to have you. ✨",
+                "You care so deeply, and that makes you an amazing partner. 🌹",
+                "You are everything I ever wanted. 🥺",
+                "Stop apologizing for being human. You are perfect to me. 🫂",
+                "I am never letting you go. 🕊️",
+                "You make my life infinitely better just by existing in it. 🌍"
+            ]
+        };
+
+        let lastShown = { anxiety: -1, insecurity: -1, miss: -1, failure: -1, badgf: -1 };
+
+        function generateLove(type) {
+            const display = document.getElementById('reassurance-display'); 
+            display.style.opacity = 0;
+            
+            setTimeout(() => { 
+                const arr = lines[type]; 
+                let randomIndex = Math.floor(Math.random() * arr.length);
+                
+                while (randomIndex === lastShown[type] && arr.length > 1) {
+                    randomIndex = Math.floor(Math.random() * arr.length);
+                }
+                lastShown[type] = randomIndex;
+
+                display.innerText = arr[randomIndex]; 
+                display.style.opacity = 1; 
+                display.style.transition = "0.8s"; 
+            }, 400);
+        }
+
+        // --- 7. BREATHING INTERVAL ---
+        setInterval(() => { const t = document.getElementById('breathe-text-display'); if(t) t.innerText = t.innerText === "Breathe in..." ? "Breathe out..." : "Breathe in..."; }, 4000);
+
+        // --- 8. PARTICLES & OBSERVERS ---
+        const canvas = document.getElementById('particles'); const ctx = canvas.getContext('2d');
+        let particlesArray = []; window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }); canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        class Particle {
+            constructor() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.size = Math.random() * 2 + 0.5; this.speedY = Math.random() * 0.3 + 0.1; this.opacity = Math.random() * 0.6 + 0.2; }
+            update() { this.y -= this.speedY; if (this.y < 0) { this.y = canvas.height; this.x = Math.random() * canvas.width; } }
+            draw() { ctx.fillStyle = `rgba(232, 180, 184, ${this.opacity})`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
+        }
+        for (let i = 0; i < 80; i++) particlesArray.push(new Particle());
+        function animateParticles() { ctx.clearRect(0, 0, canvas.width, canvas.height); particlesArray.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animateParticles); }
+        animateParticles();
+
+        const observer = new IntersectionObserver((entries) => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }); }, { threshold: 0.1 });
+        function observeCards() { document.querySelectorAll('.glass-card').forEach(c => observer.observe(c)); observer.observe(document.getElementById('bottom-text')); }
+    </script>
+</body>
+</html>
